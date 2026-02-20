@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>MT5 Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg:     #060612;
@@ -19,8 +19,8 @@
     --yellow: #FFB800;
     --gray:   #4A5070;
     --text:   #E8EAF6;
-    --mono:   'Rajdhani', sans-serif;
-    --sans:   'Orbitron', sans-serif;
+    --mono:   'Sarabun', sans-serif;
+    --sans:   'Sarabun', sans-serif;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -290,6 +290,7 @@
 </main>
 
 <script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsT4AkpWwiKmiBWcegAfnOldtyCTalGi5SKIPhnKC1KMZyG-DbbTPXHLFyfHYSia5z/exec';
 const REFRESH_MS = 60000;
 
 function fmt(n) {
@@ -382,18 +383,17 @@ function render(clients) {
   bar.style.animation = 'countdown 60s linear infinite';
 }
 
-// ดึงข้อมูลจาก Apps Script server-side โดยตรง ไม่มี CORS
 function load() {
-  google.script.run
-    .withSuccessHandler(render)
-    .withFailureHandler(err => {
+  fetch(APPS_SCRIPT_URL)
+    .then(res => res.json())
+    .then(render)
+    .catch(err => {
       document.getElementById('main').innerHTML = `
         <div class="status-screen">
           <span style="color:#FF3B55">⚠ ERROR</span>
           <span>${err.message}</span>
         </div>`;
-    })
-    .getClients();
+    });
 }
 
 load();
