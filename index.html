@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#060612">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>MT5 Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:     #060612;
+    --card:   #0D0F1E;
+    --border: #1A1F3A;
+    --accent: #4F8EFF;
+    --green:  #00F0A0;
+    --red:    #FF3B55;
+    --yellow: #FFB800;
+    --gray:   #4A5070;
+    --text:   #E8EAF6;
+    --mono:   'Rajdhani', sans-serif;
+    --sans:   'Orbitron', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(6,6,18,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 10px;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .logo { display: flex; align-items: center; gap: 8px; }
+
+  .logo-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  @keyframes glow {
+    0%,100% { box-shadow: 0 0 6px var(--accent); }
+    50%      { box-shadow: 0 0 16px var(--accent); }
+  }
+
+  .logo-text {
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 2px;
+  }
+
+  .live-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #00F0A015;
+    border: 1px solid #00F0A030;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 1.5px;
+  }
+
+  .live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  .header-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    color: var(--gray);
+  }
+
+  .refresh-bar { width: 80px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .refresh-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    animation: countdown 60s linear infinite;
+  }
+
+  @keyframes countdown { 0%{width:100%} 100%{width:0%} }
+
+  .summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 14px 16px 0;
+  }
+
+  .summary-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .summary-card.blue::before   { background: var(--accent); }
+  .summary-card.yellow::before { background: var(--yellow); }
+  .summary-card.green::before  { background: var(--green); }
+  .summary-card.red::before    { background: var(--red); }
+
+  .card-label { font-size: 8px; letter-spacing: 1.5px; color: var(--gray); font-weight: 700; margin-bottom: 6px; }
+
+  .card-value {
+    font-family: var(--sans);
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .card-value.blue   { color: var(--accent); }
+  .card-value.yellow { color: var(--yellow); }
+  .card-value.green  { color: var(--green); }
+  .card-value.red    { color: var(--red); }
+
+  .card-sub { font-size: 9px; color: var(--gray); margin-top: 4px; }
+
+  .section-title {
+    padding: 16px 16px 8px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--gray);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .client-list { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 8px; }
+
+  .client-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    animation: fadeIn 0.4s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .client-num {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: #4F8EFF15;
+    border: 1px solid #4F8EFF30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .client-name {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+
+  .client-balance { font-size: 10px; color: var(--yellow); }
+
+  .client-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  .badge.green { background: #00F0A015; color: var(--green); border: 1px solid #00F0A030; }
+  .badge.red   { background: #FF3B5515; color: var(--red);   border: 1px solid #FF3B5530; }
+
+  .client-wr { font-size: 9px; color: var(--gray); }
+
+  .wr-section {
+    margin: 0 16px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+  }
+
+  .wr-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .wr-label  { font-size: 9px; letter-spacing: 1.5px; color: var(--gray); font-weight: 700; }
+  .wr-value  { font-family: var(--sans); font-size: 13px; font-weight: 800; color: var(--green); }
+  .wr-track  { height: 6px; background: var(--border); border-radius: 6px; overflow: hidden; }
+  .wr-fill   { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--accent), var(--green)); transition: width 1s ease; }
+
+  .status-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 12px;
+    color: var(--gray);
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
+  .spinner {
+    width: 32px; height: 32px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <div class="logo-text">MT5 DASHBOARD</div>
+    </div>
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+  </div>
+  <div class="header-meta">
+    <span id="last-update">--:--:--</span>
+    <div class="refresh-bar"><div class="refresh-fill" id="refresh-fill"></div></div>
+    <span>REFRESH 60s</span>
+  </div>
+</header>
+
+<main id="main">
+  <div class="status-screen">
+    <div class="spinner"></div>
+    <span>FETCHING DATA...</span>
+  </div>
+</main>
+
+<script>
+const REFRESH_MS = 60000;
+
+function fmt(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(2) + 'M';
+  if (n >= 1000)    return (n / 1000).toFixed(1) + 'K';
+  return n.toFixed(2);
+}
+
+function timeStr() {
+  return new Date().toLocaleTimeString('th-TH');
+}
+
+function render(clients) {
+  clients = clients.filter(c => c.clientNum !== '');
+
+  const count    = clients.length;
+  const totalBal = clients.reduce((s, c) => s + c.balance, 0);
+  const avgPnL   = clients.reduce((s, c) => s + c.currentProfit, 0) / count;
+  const avgWR    = clients.reduce((s, c) => s + c.lastWR, 0) / count;
+  const posCount = clients.filter(c => c.currentProfit >= 0).length;
+  const negCount = count - posCount;
+
+  const avgPnLPct = (avgPnL * 100).toFixed(2);
+  const avgWRPct  = (avgWR * 100).toFixed(1);
+  const pnlColor  = avgPnL >= 0 ? 'green' : 'red';
+  const wrColor   = avgWR >= 0.5 ? 'green' : 'red';
+
+  const clientCards = clients.map((c, i) => {
+    const pnl      = c.currentProfit * 100;
+    const wr       = c.lastWR * 100;
+    const pnlClass = pnl >= 0 ? 'green' : 'red';
+    const pnlStr   = (pnl >= 0 ? '+' : '') + pnl.toFixed(2) + '%';
+    return `
+      <div class="client-card" style="animation-delay:${i * 60}ms">
+        <div class="client-num">${c.clientNum}</div>
+        <div class="client-info">
+          <div class="client-name">${c.clientName || '-'}</div>
+          <div class="client-balance">${fmt(c.balance)}</div>
+        </div>
+        <div class="client-stats">
+          <div class="badge ${pnlClass}">${pnlStr}</div>
+          <div class="client-wr">WR ${wr.toFixed(1)}%</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('main').innerHTML = `
+    <div class="summary">
+      <div class="summary-card blue">
+        <div class="card-label">CLIENTS</div>
+        <div class="card-value blue">${count}</div>
+        <div class="card-sub">Active accounts</div>
+      </div>
+      <div class="summary-card yellow">
+        <div class="card-label">TOTAL BAL</div>
+        <div class="card-value yellow">${fmt(totalBal)}</div>
+        <div class="card-sub">Combined</div>
+      </div>
+      <div class="summary-card ${pnlColor}">
+        <div class="card-label">AVG PnL</div>
+        <div class="card-value ${pnlColor}">${avgPnL >= 0 ? '+' : ''}${avgPnLPct}%</div>
+        <div class="card-sub">${posCount} profit / ${negCount} loss</div>
+      </div>
+      <div class="summary-card ${wrColor}">
+        <div class="card-label">AVG WR</div>
+        <div class="card-value ${wrColor}">${avgWRPct}%</div>
+        <div class="card-sub">Win rate</div>
+      </div>
+    </div>
+
+    <div class="wr-section">
+      <div class="wr-header">
+        <div class="wr-label">OVERALL WIN RATE</div>
+        <div class="wr-value">${avgWRPct}%</div>
+      </div>
+      <div class="wr-track">
+        <div class="wr-fill" style="width:${Math.min(avgWR * 100, 100)}%"></div>
+      </div>
+    </div>
+
+    <div class="section-title">CLIENT DETAILS</div>
+    <div class="client-list">${clientCards}</div>
+  `;
+
+  document.getElementById('last-update').textContent = timeStr();
+
+  const bar = document.getElementById('refresh-fill');
+  bar.style.animation = 'none';
+  bar.offsetHeight;
+  bar.style.animation = 'countdown 60s linear infinite';
+}
+
+// ดึงข้อมูลจาก Apps Script server-side โดยตรง ไม่มี CORS
+function load() {
+  google.script.run
+    .withSuccessHandler(render)
+    .withFailureHandler(err => {
+      document.getElementById('main').innerHTML = `
+        <div class="status-screen">
+          <span style="color:#FF3B55">⚠ ERROR</span>
+          <span>${err.message}</span>
+        </div>`;
+    })
+    .getClients();
+}
+
+load();
+setInterval(load, REFRESH_MS);
+</script>
+</body>
+</html>
