@@ -294,9 +294,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsT4AkpWwiKmiB
 const REFRESH_MS = 60000;
 
 function fmt(n) {
-  if (n >= 1000000) return (n / 1000000).toFixed(2) + 'M';
-  if (n >= 1000)    return (n / 1000).toFixed(1) + 'K';
-  return n.toFixed(2);
+  return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function timeStr() {
@@ -401,3 +399,4 @@ setInterval(load, REFRESH_MS);
 </script>
 </body>
 </html>
+
