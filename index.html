@@ -330,7 +330,7 @@ function render(clients) {
         </div>
         <div class="client-stats">
           <div class="badge ${pnlClass}">${pnlStr}</div>
-          <div class="client-wr">WR ${wr.toFixed(1)}%</div>
+          <div class="client-wr">Winrate ${wr.toFixed(1)}%</div>
         </div>
       </div>`;
   }).join('');
@@ -343,7 +343,7 @@ function render(clients) {
         <div class="card-sub">Active accounts</div>
       </div>
       <div class="summary-card yellow">
-        <div class="card-label">TOTAL BAL</div>
+        <div class="card-label">TOTAL BALANCE</div>
         <div class="card-value yellow">${fmt(totalBal)}</div>
         <div class="card-sub">Combined</div>
       </div>
@@ -355,7 +355,7 @@ function render(clients) {
       <div class="summary-card ${wrColor}">
         <div class="card-label">AVG Winrate</div>
         <div class="card-value ${wrColor}">${avgWRPct}%</div>
-        <div class="card-sub">Win rate</div>
+        <div class="card-sub"></div>
       </div>
     </div>
 
@@ -399,6 +399,7 @@ setInterval(load, REFRESH_MS);
 </script>
 </body>
 </html>
+
 
 
 
